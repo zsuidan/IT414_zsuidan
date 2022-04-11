@@ -4,6 +4,9 @@ import shutil
 from pathlib import Path
 
 def copyFolder():
+    """Allows a user to copy the contents of a specified folder into another folder. 
+    Files over 1 GB in size are not copied and a log file detailing what was copied is generated at the destination folder.
+    """
     #Obtains root path and changes directory to it
     my_path = getPath()
     os.chdir(my_path)
@@ -69,21 +72,12 @@ def copyFolder():
     else:
         print("\n" + str(copied_folder_path) + " does not exist.")
 
-# def createFolder():
-
-#     my_path = getPath()
-
-#     new_folder = input("What is the name of the folder you would like to create?: ")
-#     os.makedirs(os.path.join(my_path, new_folder))
-
-# def drawmenu():
-    
-#     print("What would you like to do?")
-#     print("To show all files, enter 'S'")
-#     print("To create a new folder, enter 'N'")
-#     print("To copy a file, enter 'C'")
-
 def getPath():
+    """Obtains the root directory based on the user's operating system.
+
+    Returns:
+        root_fs - the root directory of the user based on their system
+    """
 
     my_system = platform.system()
 
@@ -93,28 +87,3 @@ def getPath():
         root_fs = "/"
 
     return root_fs
-
-
-# def showFiles():
-
-#     my_path = getPath()
-
-#     os.chdir(my_path)
-#     print("Printing the contents of " + os.getcwd())
-
-#     file_list = os.listdir(my_path)
-
-#     for file_item in file_list:
-#         if os.path.isfile(os.path.join(my_path, file_item)):
-#             temp_file_size = os.path.getsize(os.path.join(my_path, file_item))
-#             temp_file_divide = temp_file_size / 1000000
-
-#             if temp_file_divide < 1:
-#                 print(file_item + " | " + str(temp_file_size) + " bytes")
-#             else: 
-#                 print(file_item + " | " + str(temp_file_divide) + " MB")
-        
-#         else:
-#             print(file_item + " | " + "folder")
-
-#     print(my_path)
