@@ -52,7 +52,7 @@ def copyFolder():
                 else: 
                     log_file.write(str(file_item) + " was passed over for being over 1 GB in size.\n")
             
-            #Handles copying folders
+            #Handles copying subfolders
             elif os.path.isdir(file_path):
                 # if os.path.isdir(folder_copied_to_path / file_item):
                 #     shutil.rmtree(folder_copied_to_path / file_item)
@@ -80,8 +80,6 @@ def copyFolder():
                             log_file.write(str(subfolder_item) + " was copied successfully to " + str(folder_copied_to_path) + "\n")
                         else: 
                             log_file.write(str(subfolder_item) + " was passed over for being over 1 GB in size.\n")
-                            
-                        log_file.write(str(subfolder_item) + " was copied successfully to " + str(folder_copied_to_path) + "\n")
             
         #Closes log file
         log_file.close()
