@@ -21,12 +21,16 @@ def copyFolder():
     #If the folder being copied exists, the rest of the function is carried out otherwise an error message is displayed
     if copied_folder_path.exists():
         #Opens log file for folder copied to
-        log_file = open(f'log.txt', 'w')
+        #log_file = open(f'log.txt', 'w')
 
-        #Checks if the folder being copied to exists and creates it if it does not
+        #Checks if the folder being copied to exists and creates it if it does not. Also opens a log file at the folder being copied to.
         if not folder_copied_to_path.exists():
             os.makedirs(folder_copied_to_path)
+            log_file = open(str(folder_copied_to_path) + "/log.txt", 'w')
             log_file.write(str(folder_copied_to_path) + " was created successfully.\n")
+        else:
+            log_file = open(str(folder_copied_to_path) + "/log.txt", 'w')
+        
 
         #Copies contents of folder being copied to the folder being copied to
         file_list = os.listdir(copied_folder_path)
@@ -49,25 +53,38 @@ def copyFolder():
                     log_file.write(str(file_item) + " was passed over for being over 1 GB in size.\n")
             
             #Handles copying folders
-            else:
-                if os.path.isdir(folder_copied_to_path / file_item):
-                    shutil.rmtree(folder_copied_to_path / file_item)
-                    shutil.copytree(copied_folder_path / file_item, folder_copied_to_path / file_item)
-                else:
-                    shutil.copytree(copied_folder_path / file_item, folder_copied_to_path / file_item)
-                
-                log_file.write(str(file_item) + " was copied successfully to " + str(folder_copied_to_path) + "\n")
-        
-        #Closes log file and transfers it to destination folder
-        log_file.close()
+            elif os.path.isdir(file_path):
+                # if os.path.isdir(folder_copied_to_path / file_item):
+                #     shutil.rmtree(folder_copied_to_path / file_item)
+                #     shutil.copytree(copied_folder_path / file_item, folder_copied_to_path / file_item)
+                # else:
+                #     shutil.copytree(copied_folder_path / file_item, folder_copied_to_path / file_item)
 
-        if os.path.isfile(folder_copied_to_path / "log.txt"):
-            os.remove(folder_copied_to_path / "log.txt")
-            shutil.move("log.txt", folder_copied_to_path)
-        else:
-            shutil.move("log.txt", folder_copied_to_path)
-        
-        print("\nFolder copied successfully.")
+                #Creates subfolder in the folder being copied to
+                os.makedirs(folder_copied_to_path/file_item)
+
+                #Goes through items within the subfolder and copies them to the newly created subfolder
+                subfolder_list = os.listdir(file_path)
+
+                for subfolder_item in subfolder_list:
+                    subfolder_file_path = os.path.join(file_path, subfolder_item)
+                    #Handles copying files
+                    if os.path.isfile(subfolder_file_path):
+                        #Obtains size of the file
+                        temp_file_size = os.path.getsize(subfolder_file_path)
+                        temp_file_divide = temp_file_size / 1000000000
+
+                        #Files below 1 GB in size are copied and those over 1 GB are skipped
+                        if temp_file_divide < 1:
+                            shutil.copy2(subfolder_file_path, folder_copied_to_path/file_item)
+                            log_file.write(str(subfolder_item) + " was copied successfully to " + str(folder_copied_to_path) + "\n")
+                        else: 
+                            log_file.write(str(subfolder_item) + " was passed over for being over 1 GB in size.\n")
+                            
+                        log_file.write(str(subfolder_item) + " was copied successfully to " + str(folder_copied_to_path) + "\n")
+            
+        #Closes log file
+        log_file.close()
 
     else:
         print("\n" + str(copied_folder_path) + " does not exist.")
