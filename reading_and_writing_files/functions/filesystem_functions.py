@@ -61,7 +61,8 @@ def copyFolder():
                 #     shutil.copytree(copied_folder_path / file_item, folder_copied_to_path / file_item)
 
                 #Creates subfolder in the folder being copied to
-                os.makedirs(folder_copied_to_path/file_item)
+                if not os.path.isdir(folder_copied_to_path/file_item):
+                    os.makedirs(folder_copied_to_path/file_item)
 
                 #Goes through items within the subfolder and copies them to the newly created subfolder
                 subfolder_list = os.listdir(file_path)
