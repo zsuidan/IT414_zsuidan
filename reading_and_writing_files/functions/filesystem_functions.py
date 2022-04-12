@@ -63,6 +63,7 @@ def copyFolder():
                 #Creates subfolder in the folder being copied to
                 if not os.path.isdir(folder_copied_to_path/file_item):
                     os.makedirs(folder_copied_to_path/file_item)
+                    log_file.write(str(folder_copied_to_path/file_item) + " was created successfully.\n")
 
                 #Goes through items within the subfolder and copies them to the newly created subfolder
                 subfolder_list = os.listdir(file_path)
@@ -81,6 +82,10 @@ def copyFolder():
                             log_file.write(str(subfolder_item) + " was copied successfully to " + str(folder_copied_to_path) + "\n")
                         else: 
                             log_file.write(str(subfolder_item) + " was passed over for being over 1 GB in size.\n")
+                    
+                    #Skips any further subfolders found and creates a log message
+                    elif os.path.isdir(subfolder_file_path):
+                        log_file.write(str(subfolder_file_path) + " was skipped.\n")
             
         #Closes log file
         log_file.close()
