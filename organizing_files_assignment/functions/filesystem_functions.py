@@ -35,7 +35,7 @@ def processLogs():
                         search_found = True
                         ip_address = ip_regex.findall(line)
 
-                        if str(ip_address[0]) not in match_list:
+                        if (str(ip_address[0]) + " " + file) not in match_list:
                             match_list += (str(ip_address[0]) + " " + file + ",\n")
 
             log_file.close()
