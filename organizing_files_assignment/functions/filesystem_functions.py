@@ -32,19 +32,22 @@ def processLogs():
                 for line in log_file:
                     found_search_item = log_regex.findall(line)
                     if found_search_item:
+                        search_found = True
                         ip_address = ip_regex.findall(line)
 
                         if str(ip_address) not in match_list:
                             match_list += (str(ip_address) + file + ",\n")
-                            search_found = True
 
             log_file.close()
 
             if search_found:
                 temp_filename = "processed_" + file
                 shutil.move(log_path, os.path.join(log[0], temp_filename))
-            # else:
-            #     send2trash.send2trash(log[0])
+            else:
+                try:
+                    send2trash.send2trash(log[0])
+                except:
+                    print("Skipped " + file)
                
 
     #Opens a text file for writing matching search items
