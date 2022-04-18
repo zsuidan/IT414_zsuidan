@@ -17,10 +17,9 @@ def processLogs():
     #Regex for the patterns being searched for
     log_regex = re.compile(r'\/wp-login\.php\?action=register|\.\.\/|install|select')
 
-    my_logs = os.walk(str(root_fs) + "/logs")
+    my_logs = os.walk(str(root_fs) + "logs")
 
-    #Opens a text file for writing matching search items
-    matches = open(str(root_fs) + "/logs/matches.txt", 'w')
+    match_list = ""
 
     for log in my_logs:
         #Pulls individual log files and processes them
@@ -31,17 +30,21 @@ def processLogs():
             results = log_regex.findall(log_file.read())
             print("Results for " + file + str(results))
 
-            matches.write(str(results))
+            match_list += (str(results) + "\n")
 
             log_file.close()
 
             if results:
                 temp_filename = "processed_" + file
                 shutil.move(log_path, os.path.join(log[0], temp_filename))
-            # else:
-            #     send2trash.send2trash(log[0])
-    
-    matches.close()
+            else:
+                send2trash.send2trash(log[0])
+               
+
+    #Opens a text file for writing matching search items
+    matches_file = open(str(root_fs) + "logs/matches.txt", 'w')
+    matches_file.write(match_list)
+    matches_file.close()
 
     #Creates a results zip which contains contents of the processed logs folder
     results_zip = zipfile.ZipFile(str(root_fs) + "/log_processing/text_files/results.zip", 'w')
