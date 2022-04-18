@@ -16,6 +16,7 @@ def processLogs():
 
     #Regex for the patterns being searched for
     log_regex = re.compile(r'\/wp-login\.php\?action=register|\.\.\/|install|select')
+    ip_regex = re.compile(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
 
     my_logs = os.walk(str(root_fs) + "logs")
 
@@ -25,20 +26,25 @@ def processLogs():
         #Pulls individual log files and processes them
         for file in log[2]:
             log_path = os.path.join(log[0], file)
-            log_file = open(log_path)
+            search_found = False
 
-            results = log_regex.findall(log_file.read())
-            print("Results for " + file + str(results))
+            with open(log_path) as log_file:
+                for line in log_file:
+                    found_search_item = log_regex.findall(line)
+                    if found_search_item:
+                        ip_address = ip_regex.findall(line)
 
-            match_list += (str(results) + "\n")
+                        if str(ip_address) not in match_list:
+                            match_list += (str(ip_address) + file + ",\n")
+                            search_found = True
 
             log_file.close()
 
-            if results:
+            if search_found:
                 temp_filename = "processed_" + file
                 shutil.move(log_path, os.path.join(log[0], temp_filename))
-            else:
-                send2trash.send2trash(log[0])
+            # else:
+            #     send2trash.send2trash(log[0])
                
 
     #Opens a text file for writing matching search items
