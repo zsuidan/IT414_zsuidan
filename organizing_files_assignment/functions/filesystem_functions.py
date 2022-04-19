@@ -15,7 +15,7 @@ def processLogs():
     log_zip.extractall(str(root_fs) + "/logs")
 
     #Regex for the patterns being searched for
-    log_regex = re.compile(r'\/wp-login\.php\?action=register|\.\.\/|install|select')
+    log_regex = re.compile(r'\/wp-login\.php\?action=register|\.\.\/|install|select|403 134')
     ip_regex = re.compile(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
 
     my_logs = os.walk(str(root_fs) + "logs")
