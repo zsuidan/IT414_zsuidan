@@ -11,10 +11,11 @@ def processLogs():
     root_fs = getRoot()
     shutil.copytree('./organizing_files_assignment', root_fs + 'log_processing', dirs_exist_ok=True)
 
-    #Unzips the file containing the logs into a logs folder in the root directory
+    #Sets paths for log folder and the zip file containing the logs
     log_folder_path = Path(root_fs + "logs")
-    log_zip = zipfile.ZipFile(root_fs + "/log_processing/text_files/access_logs.zip")
+    log_zip = zipfile.ZipFile(root_fs + "log_processing/text_files/access_logs.zip")
 
+    #Unzips the zip file into the logs folder. If the logs folder exists, asks user if they would like to overwrite it and exits if they do not.
     if log_folder_path.exists():
         overwrite_logs = input("Logs folder already exists. Enter \"Y\" to confirm overwrite: ")
         if overwrite_logs.lower() == 'y':
@@ -40,18 +41,19 @@ def processLogs():
             log_path = os.path.join(log[0], file)
             search_found = False
 
-            #If a line matches the regex search, the IP address for that line plus the file name are added to the match list
+            #Opens and loops through a log file line by line
             with open(log_path) as log_file:
                 for line in log_file:
+                    ##If a line matches the regex search, the IP address for that line plus the file name are added to the match list
                     found_search_item = log_regex.findall(line)
+
                     if found_search_item:
                         search_found = True
                         ip_address = ip_regex.findall(line)
 
+                        #Checks if the IP address has already shown up in the given log file to avoid duplicates
                         if (str(ip_address[0]) + " " + file) not in match_list:
                             match_list += (str(ip_address[0]) + " " + file + ",\n")
-
-            log_file.close()
 
             #If a match was found in a log file, the file is kept and processed_ is added to the front of the name
             if search_found:
@@ -70,8 +72,9 @@ def processLogs():
 
     #Creates a results zip which contains contents of the processed logs folder
     results_zip = zipfile.ZipFile("./organizing_files_assignment/text_files/results.zip", 'w')
-    
-    for foldername, subfolders, filenames in os.walk(root_fs + "/logs"):
+
+    #Walks through the logs folder, sending each folder and file to the results ZIP
+    for foldername, subfolders, filenames in os.walk(root_fs + "logs"):
         # Add the current folder to the ZIP file.
         results_zip.write(foldername)
         # Add all the files in this folder to the ZIP file.
@@ -79,9 +82,10 @@ def processLogs():
             results_zip.write(os.path.join(foldername, filename))
     
     results_zip.close()
+    print("Log processing complete.")
     
 
-
+#Obtains the root of the file system depending on the user's system
 def getRoot():
 
     my_system = platform.system()
