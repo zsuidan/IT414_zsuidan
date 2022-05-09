@@ -1,6 +1,7 @@
 import PyPDF4
 import docx
 import openpyxl
+from bs4 import BeautifulSoup
 
 #Creates a new document for the report
 ceo_report = docx.Document()
@@ -18,6 +19,28 @@ ceo_report.add_page_break()
 #Adds the contents of the sales spreadsheet to the ceo report
 sales_file = openpyxl.load_workbook('text_files/sales.xlsx')
 
+ceo_report.add_heading("Sales", 1)
+
+curr_sheet = sales_file.active
+max_row = curr_sheet.max_row
+max_col = curr_sheet.max_column
+
+sales_table = ceo_report.add_table(rows=max_row, cols=max_col)
+
+row_count = 1
+
+while row_count <= max_row:
+    tmp_row_cells = sales_table.rows[row_count - 1].cells
+    col_count = 1
+
+    while col_count <= max_col:
+        tmp_row_cells[col_count - 1].text = str(curr_sheet.cell(row=row_count, column=col_count).value)
+        col_count += 1
+
+    row_count += 1
+
+ceo_report.add_page_break()
+
 #Adds the contents of the marketing PDF to the ceo report
 marketing_file = open('text_files/marketing.pdf', 'rb')
 
@@ -34,8 +57,18 @@ ceo_report.add_paragraph(pdf_text)
 
 marketing_file.close()
 
+ceo_report.add_page_break()
+
 #Adds the contents of the IT webpage to the ceo report
-it_file = open('text_files/IT.html', 'r')
+it_file = open('text_files/IT.html')
+it_soup = BeautifulSoup(it_file, "lxml")
+
+ceo_report.add_heading("IT", 1)
+
+it_paragraphs = it_soup.findAll("p")
+
+for para in it_paragraphs:
+    ceo_report.add_paragraph(para.getText())
 
 #Saves the CEO report document to the text_files folder
 ceo_report.save("text_files/ceo_report.docx")
