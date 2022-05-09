@@ -14,7 +14,7 @@ ceo_report.add_heading("Operations", 1)
 for paragraph in operations_file.paragraphs:
     ceo_report.add_paragraph(paragraph.text)
 
-ceo_report.add_page_break()
+#ceo_report.add_page_break()
 
 #Adds the contents of the sales spreadsheet to the ceo report
 sales_file = openpyxl.load_workbook('text_files/sales.xlsx')
@@ -34,7 +34,18 @@ while row_count <= max_row:
     col_count = 1
 
     while col_count <= max_col:
-        tmp_row_cells[col_count - 1].text = str(curr_sheet.cell(row=row_count, column=col_count).value)
+        if col_count == 5 and row_count > 1:
+            tmp_row_cells[col_count - 1].text = str(curr_sheet.cell(row=row_count, column=col_count).value * 100) + "%"
+
+        elif col_count > 1 and row_count > 1:
+            try:
+                raw_number = curr_sheet.cell(row=row_count, column=col_count).value
+                formatted_number = "{:,}".format(raw_number)
+                tmp_row_cells[col_count - 1].text = formatted_number
+            except:
+                tmp_row_cells[col_count - 1].text = str(curr_sheet.cell(row=row_count, column=col_count).value)
+        else:
+            tmp_row_cells[col_count - 1].text = str(curr_sheet.cell(row=row_count, column=col_count).value)
         col_count += 1
 
     row_count += 1
@@ -57,7 +68,7 @@ ceo_report.add_paragraph(pdf_text)
 
 marketing_file.close()
 
-ceo_report.add_page_break()
+#ceo_report.add_page_break()
 
 #Adds the contents of the IT webpage to the ceo report
 it_file = open('text_files/IT.html')
