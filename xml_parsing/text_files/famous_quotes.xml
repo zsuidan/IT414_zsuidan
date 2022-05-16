@@ -1,0 +1,18 @@
+<famous_quotes>
+    <quote_item>
+        <person>Winston Churchill</person>
+        <quote>“Continuous effort – not strength or intelligence – is the key to unlocking our potential.”</quote>
+    </quote_item>
+    <quote_item>
+        <person>Helen Keller</person>
+        <quote>“Character cannot be developed in ease and quiet. Only through experience of trial and suffering can the soul be strengthened, ambition inspired, and success achieved.”</quote>
+    </quote_item>
+    <quote_item>
+        <person>Muhammad Ali</person>
+        <quote>“I hated every minute of training, but I said, ‘Don’t quit. Suffer now and live the rest of your life as a champion.’”</quote>
+    </quote_item>
+    <quote_item>
+        <person>Albert Einstein</person>
+        <quote>“Imagination is the highest form of research.”</quote>
+    </quote_item>
+</famous_quotes>
