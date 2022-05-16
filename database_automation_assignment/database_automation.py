@@ -35,9 +35,10 @@ if imported_file_type.lower() == "csv":
                 my_db.executeQuery("INSERT INTO addresses_working (first_name, last_name, street, city, state, zip) VALUES ('" + csv_data[row_count][0] + "','" + csv_data[row_count][1] + "','" + csv_data[row_count][2] + "','" + csv_data[row_count][3] + "','" + csv_data[row_count][4] + "','" + csv_data[row_count][5] + "')")
                 row_count += 1
 
-    #Displays an error if the file is not found
+    #Displays an error if the file is not found and exits program
     except:
         print("File not found.")
+        exit()
 #If the file type is json, executes the following
 elif imported_file_type.lower() == "json":
     try: 
@@ -52,9 +53,10 @@ elif imported_file_type.lower() == "json":
             for row in json_data:
                 my_db.executeQuery("INSERT INTO addresses_working (first_name, last_name, street, city, state, zip) VALUES ('" + row['first_name'] + "','" + row['last_name'] + "','" + row['street'] + "','" + row['city'] + "','" + row['state'] + "','" + row['zip'] + "')")
 
-    #Displays an error if the file is not found
+    #Displays an error if the file is not found and exits program
     except:
         print("File not found.")
+        exit()
 #If the file type is xml, executes the following
 elif imported_file_type.lower() == "xml":
     try:
@@ -79,9 +81,10 @@ elif imported_file_type.lower() == "xml":
                 my_db.executeQuery("INSERT INTO addresses_working (first_name, last_name, street, city, state, zip) VALUES ('" + first_names[row_count].getText() + "','" + last_names[row_count].getText() + "','" + streets[row_count].getText() + "','" + cities[row_count].getText() + "','" + states[row_count].getText() + "','" + zips[row_count].getText() + "')")
                 row_count += 1
 
-    #Displays an error if the file is not found
+    #Displays an error if the file is not found and exits program
     except:
         print("File not found.")
+        exit()
 
 #Swaps the data of the addresses and addresses_working tables
 my_db.executeQuery("START TRANSACTION")
