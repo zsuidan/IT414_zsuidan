@@ -6,10 +6,6 @@ from bs4 import BeautifulSoup
 #Connects to the database being used
 my_db = DB_Connect('root', '', 'database_automation_assignment')
 
-my_result = my_db.executeSelectQuery("SELECT * FROM addresses")
-
-print(my_result)
-
 #Prompts user for the file of the table they would like to import and the file type
 imported_table = input("Please enter the name of the file you want to import (no extension): ")
 imported_file_type = input("Please enter the file type (CSV, JSON, or XML): ")
@@ -79,6 +75,29 @@ elif imported_file_type.lower() == "xml":
     try:
         with open("text_files/" + imported_table + ".xml") as xml_file:
             my_db.executeQuery("TRUNCATE addresses_working")
-            xml_parse = BeautifulSoup(xml_file, "xml")
+            file_text = xml_file.read()
+            xml_data = BeautifulSoup(file_text, "xml")
+
+            first_names = xml_data.find_all("first_name")
+            last_names = xml_data.find_all("last_name")
+            streets = xml_data.find_all("street")
+            cities = xml_data.find_all("city")
+            states = xml_data.find_all("state")
+            zips = xml_data.find_all("zip")
+
+            row_count = 0
+            while row_count < len(streets):
+                my_db.executeQuery("INSERT INTO addresses_working (first_name, last_name, street, city, state, zip) VALUES ('" + first_names[row_count].getText() + "','" + last_names[row_count].getText() + "','" + streets[row_count].getText() + "','" + cities[row_count].getText() + "','" + states[row_count].getText() + "','" + zips[row_count].getText() + "')")
+                row_count += 1
+
+            #Swaps the data of the addresses and addresses_working tables
+            my_db.executeQuery("START TRANSACTION")
+            my_db.executeQuery("RENAME TABLE database_automation_assignment.addresses TO database_automation_assignment.addresses_old")
+            my_db.executeQuery("RENAME TABLE database_automation_assignment.addresses_working TO database_automation_assignment.addresses")
+            my_db.executeQuery("COMMIT")
+
+            my_db.executeQuery("START TRANSACTION")
+            my_db.executeQuery("RENAME TABLE database_automation_assignment.addresses_old TO database_automation_assignment.addresses_working")
+            my_db.executeQuery("COMMIT")
     except:
         print("File not found.")
