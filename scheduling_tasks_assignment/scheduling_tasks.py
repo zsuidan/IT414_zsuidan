@@ -86,13 +86,31 @@ with open('text_files/script_log.txt', 'a') as log_file:
 google_sheet = ezsheets.createSpreadsheet("Exam Data")
 curr_sheet = google_sheet[0]
 
-#Adds data to google spreadsheet
-row_count = 1
+#Moves data into a list for each column
+parent_education = []
+test_prep = []
+math_score = []
+reading_score = []
+writing_score = []
+
+row_count = 0
 
 while row_count < len(csv_data):
-    curr_sheet.updateRow(row_count, [csv_data[row_count-1][0], csv_data[row_count-1][1], csv_data[row_count-1][2], csv_data[row_count-1][3], csv_data[row_count-1][4]])
-    
+    parent_education.append(csv_data[row_count][0])
+    test_prep.append(csv_data[row_count][1])
+    math_score.append(csv_data[row_count][2])
+    reading_score.append(csv_data[row_count][3])
+    writing_score.append(csv_data[row_count][4])
+
     row_count += 1
+
+#Updates each column in the google sheet with the column lists
+curr_sheet.updateColumn(1, parent_education)
+curr_sheet.updateColumn(2, test_prep)
+curr_sheet.updateColumn(3, math_score)
+curr_sheet.updateColumn(4, reading_score)
+curr_sheet.updateColumn(5, writing_score)
+
 
 with open('text_files/script_log.txt', 'a') as log_file:
     log_file.write(time.ctime() + " - Google spreadsheet creation complete.\n")
