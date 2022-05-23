@@ -1,0 +1,19 @@
+Scheduling script to run 4 times every day
+
+Windows
+1. Open Task Scheduler
+2. Action -> Create Task
+3. On the "General" page, give the task a name
+4. On the "Triggers" page, select "New"  
+5. Select "On a schedule" for "Begin the Task" and select "One time" under "Settings"
+6. Check "Repeat task every:" and set it to 6 hours and set duration to "Indefinitely" 
+7. Ensure "Enabled" is checked and click "OK"
+7. On the "Actions" page, select "New" 
+8. Select "Start a program" and enter "python" under "Program/Script"
+9. Put the directory of this script in "Add Arguments" and click "OK"
+10. Click "OK" again to finish setting up the task
+
+Linux
+1. Use crontab -e to open the editor
+2. At the bottom of the file, add the following: "0 */6 * * * /usr/bin/python (directory of script)"
+3. Save and exit

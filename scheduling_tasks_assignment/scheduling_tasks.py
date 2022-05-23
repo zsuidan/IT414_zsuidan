@@ -1,5 +1,4 @@
 import requests
-from setuptools import setup
 from classes.database_access import DB_Connect
 import csv
 import openpyxl
@@ -13,6 +12,7 @@ my_db = DB_Connect('root', '', 'scheduling_tasks_assignment')
 #Imports the data from a webpage and writes it to a csv file stored in text_files
 request = requests.get('https://ool-content.walshcollege.edu/CourseFiles/IT/IT414/MASTER/Week08/WI20-Assignment/exam_data.csv')
 
+#If the request is successful, writes the data to exam_data.csv under text_files
 if request.status_code == 200:
     exam_data = open('text_files/exam_data.csv', 'wb')
 
@@ -21,31 +21,10 @@ if request.status_code == 200:
 
     with open('text_files/script_log.txt', 'a') as log_file:
         log_file.write(time.ctime() + " - exam_data.csv retrieval complete.\n")
-
-#Writes the data from the file to the database
-def writeToDatabase():
-    try:
-        with open("text_files/exam_data.csv") as csv_file:
-            #Clears existing data in working table
-            my_db.executeQuery("TRUNCATE exam_data")
-
-            #Reads data from csv file and adds it to a list
-            csvReader = csv.reader(csv_file)
-            csv_data = list(csvReader)
-            
-            #Fills working table with imported csv data. Skips first row containing headers.
-            row_count = 1
-            while row_count < len(csv_data):
-                my_db.executeQuery("INSERT INTO exam_data (parental_education_level, test_prep_course, math_score, reading_score, writing_score) VALUES (\"" + csv_data[row_count][0] + "\",'" + csv_data[row_count][1] + "','" + csv_data[row_count][2] + "','" + csv_data[row_count][3] + "','" + csv_data[row_count][4] + "')")
-                row_count += 1
-            
-            my_db.conn.commit()
-
-            with open('text_files/script_log.txt', 'a') as log_file:
-                log_file.write(time.ctime() + " - Database writing complete.\n")
-    except:
-        print("File not found.")
-        exit()
+#If request is unsuccessful, prints an error and exits the program.
+else:
+    print("Unable to retrieve file")
+    exit()
 
 #Creates an excel spreadsheet and writes the csv data to it
 def createExcelSheet():
@@ -128,11 +107,36 @@ def createGoogleSheet():
     curr_sheet.updateColumn(4, reading_score)
     curr_sheet.updateColumn(5, writing_score)
 
-
     with open('text_files/script_log.txt', 'a') as log_file:
         log_file.write(time.ctime() + " - Google spreadsheet creation complete.\n")
 
-#Utilizes multithreading to perform three functions
+
+#Writes the data from the file to the database
+def writeToDatabase():
+    try:
+        with open("text_files/exam_data.csv") as csv_file:
+            #Clears existing data in working table
+            my_db.executeQuery("TRUNCATE exam_data")
+
+            #Reads data from csv file and adds it to a list
+            csvReader = csv.reader(csv_file)
+            csv_data = list(csvReader)
+            
+            #Fills exam_data table with imported csv data. Skips first row containing headers.
+            row_count = 1
+            while row_count < len(csv_data):
+                my_db.executeQuery("INSERT INTO exam_data (parental_education_level, test_prep_course, math_score, reading_score, writing_score) VALUES (\"" + csv_data[row_count][0] + "\",'" + csv_data[row_count][1] + "','" + csv_data[row_count][2] + "','" + csv_data[row_count][3] + "','" + csv_data[row_count][4] + "')")
+                row_count += 1
+            
+            my_db.conn.commit()
+
+            with open('text_files/script_log.txt', 'a') as log_file:
+                log_file.write(time.ctime() + " - Database writing complete.\n")
+    except:
+        print("File not found.")
+        exit()
+
+#Utilizes multithreading to perform three functions simultaneously
 dbThread = threading.Thread(target=writeToDatabase)
 excelThread = threading.Thread(target=createExcelSheet)
 googleThread = threading.Thread(target=createGoogleSheet)
