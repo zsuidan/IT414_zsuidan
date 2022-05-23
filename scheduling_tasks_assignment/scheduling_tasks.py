@@ -3,6 +3,7 @@ from classes.database_access import DB_Connect
 import csv
 import openpyxl
 import ezsheets
+import time
 
 #Connects to the database being used
 my_db = DB_Connect('root', '', 'scheduling_tasks_assignment')
@@ -15,6 +16,9 @@ if request.status_code == 200:
 
     for chunk in request.iter_content(100000):
         exam_data.write(chunk)
+
+    with open('text_files/script_log.txt', 'a') as log_file:
+        log_file.write(time.ctime() + " - exam_data.csv retrieval complete.\n")
 
 #Writes the data from the file to the database
 try:
@@ -33,6 +37,9 @@ try:
             row_count += 1
         
         my_db.conn.commit()
+
+        with open('text_files/script_log.txt', 'a') as log_file:
+            log_file.write(time.ctime() + " - Database writing complete.\n")
 except:
     print("File not found.")
     exit()
@@ -72,6 +79,8 @@ curr_sheet.column_dimensions['E'].width = 12.5
 
 #Saves excel spreadsheet to text_files
 exam_workbook.save("text_files/exam_data.xlsx")
+with open('text_files/script_log.txt', 'a') as log_file:
+    log_file.write(time.ctime() + " - Excel spreadsheet creation complete.\n")
 
 #Creates google spreadsheet
 google_sheet = ezsheets.createSpreadsheet("Exam Data")
@@ -85,4 +94,5 @@ while row_count < len(csv_data):
     
     row_count += 1
 
-
+with open('text_files/script_log.txt', 'a') as log_file:
+    log_file.write(time.ctime() + " - Google spreadsheet creation complete.\n")
