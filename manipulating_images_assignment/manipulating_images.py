@@ -7,17 +7,22 @@ import os
 import zipfile
 import shutil
 
+#Makes a request to the webpage containing the images
+url = "https://ool-content.walshcollege.edu/CourseFiles/IT/IT414/MASTER/Week10/WI20-Assignment/employees/index.php?ModPagespeed=off"
+request = requests.get(url)
+
+#If a connection is established, creates a beautifulsoup from the webpage
+if request.status_code == 200:
+    employee_soup = BeautifulSoup(request.text, 'html.parser')
+#If connection cannot be made, prints error and exits program
+else:
+    print("Could not connect to webpage.")
+    exit()
+
 #Deletes images directory if it exists and creates new one
 if os.path.exists('images'):
     shutil.rmtree('images')
 os.makedirs('images')
-
-#Makes a request to the webpage containing the images
-url = "https://ool-content.walshcollege.edu/CourseFiles/IT/IT414/MASTER/Week10/WI20-Assignment/employees/index.php?ModPagespeed=off"
-request = requests.get(url)
-request.raise_for_status()
-
-employee_soup = BeautifulSoup(request.text, 'html.parser')
 
 #Pulls logo from webpage
 logo_image = employee_soup.find('img')
