@@ -1,13 +1,13 @@
 from bs4 import BeautifulSoup
 import requests
 
-# my_url = input("Please enter a URL: ")
-# request = requests.get(my_url)
+my_url = input("Please enter a URL: ")
+request = requests.get(my_url)
 
-# if request.status_code == 200:
-#     weather_data = open("downloads/weather_data.html", "wb")
-#     for data_chunk in request.iter_content(100000):
-#         weather_data.write(data_chunk)
+if request.status_code == 200:
+    weather_data = open("downloads/weather_data.html", "wb")
+    for data_chunk in request.iter_content(100000):
+        weather_data.write(data_chunk)
 
 my_weather_page = open("downloads/weather_data.html")
 weather_soup = BeautifulSoup(my_weather_page, "lxml")
